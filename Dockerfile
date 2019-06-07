@@ -8,6 +8,7 @@ RUN apt update \
  && apt update \
  && apt -y install nginx
 
+COPY nginx.conf /etc/nginx/
 
 
 #  Some addinal debug tools are added
