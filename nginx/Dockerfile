@@ -24,7 +24,8 @@ RUN echo "------- Installing php7.3 -------" \
 #  Some addinal debug tools are added
 RUN echo "starting to install some useful monitoring tools" \
  && apt update \
- && apt -y install procps net-tools php7.3-cli \
+ && apt -y install procps net-tools socat less \
+ && apt -y install php7.3-cli \
  && echo "Finished extra install"
 
 
