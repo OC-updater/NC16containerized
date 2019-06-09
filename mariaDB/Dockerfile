@@ -1,27 +1,40 @@
-#FROM debian:stretch-slim
-FROM debian:stretch AS runner
+FROM bitnami/minideb-extras-base:stretch-r260
+LABEL maintainer "Bitnami <containers@bitnami.com>"
 
-# --- Install nginx
-RUN apt update \
- && apt -y install apt-transport-https curl gnupg2 ca-certificates lsb-release \
- && echo "deb [arch=amd64] http://mirror.klaus-uwe.me/mariadb/repo/10.3/debian $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/mariadb.list \
- && apt-key adv --recv-keys --keyserver keyserver.ubuntu.com 0xF1656F24C74CD1D8 \
- && apt update \
- && echo "------------------- Installing mariaDB --------------------------"
-# && apt -y install mariadb-server
+ENV BITNAMI_PKG_CHMOD="-R g+rwX" \
+    HOME="/" \
+    OS_ARCH="amd64" \
+    OS_FLAVOUR="debian-9" \
+    OS_NAME="linux"
 
-RUN echo "starting to install some useful monitoring tools" \
- && apt update \
- && apt -y install procps net-tools socat less \
- && apt -y install mariadb-client \
- && echo "Finished extra install"
+# Install required system packages and dependencies
+RUN install_packages libaio1 libc6 libgcc1 libjemalloc1 libncurses5 libssl1.0.2 libstdc++6 libtinfo5 zlib1g
+RUN . ./libcomponent.sh && component_unpack "mariadb" "10.3.15-0" --checksum 83401d0dcc3a9efa6049756a464fc646cc0f03dee5b56a00c1806e094d31bf8a
+RUN mkdir /docker-entrypoint-initdb.d
 
-
-VOLUME /var/lib/mysql
-
-COPY docker-entrypoint.sh /usr/local/bin/
-RUN ln -s usr/local/bin/docker-entrypoint.sh / # backwards compat
-#ENTRYPOINT ["docker-entrypoint.sh"]
+COPY rootfs /
+RUN /postunpack.sh
+ENV ALLOW_EMPTY_PASSWORD="no" \
+    BITNAMI_APP_NAME="mariadb" \
+    BITNAMI_IMAGE_VERSION="10.3.15-debian-9-r22" \
+    MARIADB_DATABASE="" \
+    MARIADB_MASTER_HOST="" \
+    MARIADB_MASTER_PORT_NUMBER="" \
+    MARIADB_MASTER_ROOT_PASSWORD="" \
+    MARIADB_MASTER_ROOT_USER="" \
+    MARIADB_PASSWORD="" \
+    MARIADB_PORT_NUMBER="3306" \
+    MARIADB_REPLICATION_MODE="" \
+    MARIADB_REPLICATION_PASSWORD="" \
+    MARIADB_REPLICATION_USER="" \
+    MARIADB_ROOT_PASSWORD="" \
+    MARIADB_ROOT_USER="root" \
+    MARIADB_USER="" \
+    NAMI_PREFIX="/.nami" \
+    PATH="/opt/bitnami/mariadb/bin:/opt/bitnami/mariadb/sbin:$PATH"
 
 EXPOSE 3306
-#CMD ["mysqld"]
+
+USER 1001
+ENTRYPOINT [ "/entrypoint.sh" ]
+CMD [ "/run.sh" ]
