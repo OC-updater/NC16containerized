@@ -29,6 +29,6 @@ ENV ALLOW_EMPTY_PASSWORD="no" \
 
 EXPOSE 6379
 
-USER 1001
+USER 1000
 ENTRYPOINT [ "/entrypoint.sh" ]
 CMD [ "/run.sh" ]
