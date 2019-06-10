@@ -13,6 +13,10 @@ RUN apt update \
 
 COPY files/nginx.conf /etc/nginx/
 COPY files/ssl.conf /etc/nginx/
+COPY files/proxy.conf /etc/nginx/
+COPY files/header.conf /etc/nginx/
+COPY files/optimization.conf /etc/nginx/
+COPY files/php_optimization.conf /etc/nginx/
 
 # --- Install php7.3
 RUN echo "------- Installing php7.3 -------" \ 
@@ -28,6 +32,8 @@ RUN echo "------- Installing php7.3 -------" \
 COPY files/nextcloud.conf /etc/nginx/conf.d/
 # Using letsencrypt, customization is postponed.
 COPY files/letsencrypt.conf /etc/nginx/conf.d/
+# Equip with enhanced dhparams
+COPY files/dhparam.pem /etc/ssl/certs/
 
 
 #  Some additional debug tools are added
