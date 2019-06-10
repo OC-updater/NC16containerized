@@ -36,8 +36,10 @@ RUN echo "------- Installing php7.3 -------" \
 COPY files/nextcloud.conf /etc/nginx/conf.d/
 # Using letsencrypt, customization is postponed.
 COPY files/letsencrypt.conf /etc/nginx/conf.d/
-# Equip with enhanced dhparams
+# Equip with enhanced dhparams and selfsigned cert
 COPY files/dhparam.pem /etc/ssl/certs/
+COPY files/nc.crt /etc/ssl/certs/
+COPY files/nc.key /etc/ssl/private/
 
 # --- Install Acmetools latest Version
 RUN echo "------- Installing acmetools -------" \
@@ -57,12 +59,13 @@ RUN echo "------- Installing Nextcloud V16.0.x -------" \
 
 # just for debugging purposes
 
+COPY files/bash_aliases.sh /etc/profile.d/
 #  Some additional debug tools are added
 RUN echo "starting to install some useful monitoring tools" \
  && apt update \
  && apt -y install procps net-tools socat less \
  && apt -y install php7.3-cli \
+ && ln /etc/profile.d/bash_aliases.sh /usr/local/bin/aliases \
  && echo "Finished extra install"
-COPY files/bash_aliases.sh /etc/profile.d/
 
 
