@@ -48,13 +48,17 @@ RUN echo "------- Installing acmetools -------" \
  && apt update \
  && apt -y install acmetool
 
-# --- Install Nextcloud latest Version of 16
+# --- Install Nextcloud latest Version of 16 + preparation for letsencrypt-acme
 RUN echo "------- Installing Nextcloud V16.0.x -------" \
 # && curl -L -k -o $NC_BASE_DIR/latest-$NC_VER.tar.bz2 $NC_URL/latest-$NC_VER.tar.bz2 \
 # && tar -xjf $NC_BASE_DIR/latest-$NC_VER.tar.bz2 -C /opt \
 # && rm latest-$NC_VER.tar.bz2
  && curl -L -k $NC_URL/latest-$NC_VER.tar.bz2 | tar -xjf - -C $NC_BASE_DIR \
- && chown -R www-data:www-data $NC_BASE_DIR 
+ && mkdir $NC_BASE_DIR/.well-known \
+ && chown -R www-data:www-data $NC_BASE_DIR \
+ && mkdir /var/letsencrypt \
+ && chown -R www-data:www-data /var/letsencrypt \
+ && ln -s /var/letsencrypt $NC_BASE_DIR/.well-known/acme-challenge 
   
 
 # just for debugging purposes
@@ -64,8 +68,9 @@ COPY files/bash_aliases.sh /etc/profile.d/
 RUN echo "starting to install some useful monitoring tools" \
  && apt update \
  && apt -y install procps net-tools socat less \
- && apt -y install php7.3-cli \
+ && apt -y install vim dnsutils iputils-ping iproute2 php7.3-cli \
  && ln /etc/profile.d/bash_aliases.sh /usr/local/bin/aliases \
+ && chmod 0755 /usr/local/bin/aliases \
  && echo "Finished extra install"
 
 
