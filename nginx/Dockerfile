@@ -3,6 +3,10 @@
 FROM bitnami/minideb:stretch
 #FROM bitnami/minideb-extras-base:stretch
 
+ENV NC_VER 16
+ENV NC_URL https://download.nextcloud.com/server/releases
+ENV NC_BASE_DIR /opt
+
 # --- Install nginx
 RUN apt update \
  && apt -y install apt-transport-https curl gnupg2 ca-certificates lsb-release \
@@ -35,6 +39,23 @@ COPY files/letsencrypt.conf /etc/nginx/conf.d/
 # Equip with enhanced dhparams
 COPY files/dhparam.pem /etc/ssl/certs/
 
+# --- Install Acmetools latest Version
+RUN echo "------- Installing acmetools -------" \
+ && echo "deb http://ppa.launchpad.net/hlandau/rhea/ubuntu xenial main" | tee /etc/apt/sources.list.d/rhea.list \
+ && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 9862409EF124EC763B84972FF5AC9651EDB58DFA \
+ && apt update \
+ && apt -y install acmetool
+
+# --- Install Nextcloud latest Version of 16
+RUN echo "------- Installing Nextcloud V16.0.x -------" \
+# && curl -L -k -o $NC_BASE_DIR/latest-$NC_VER.tar.bz2 $NC_URL/latest-$NC_VER.tar.bz2 \
+# && tar -xjf $NC_BASE_DIR/latest-$NC_VER.tar.bz2 -C /opt \
+# && rm latest-$NC_VER.tar.bz2
+ && curl -L -k $NC_URL/latest-$NC_VER.tar.bz2 | tar -xjf - -C $NC_BASE_DIR \
+ && chown -R www-data:www-data $NC_BASE_DIR 
+  
+
+# just for debugging purposes
 
 #  Some additional debug tools are added
 RUN echo "starting to install some useful monitoring tools" \
