@@ -11,7 +11,8 @@ RUN apt update \
  && apt update \
  && apt -y install nginx
 
-COPY nginx.conf /etc/nginx/
+COPY files/nginx.conf /etc/nginx/
+COPY files/ssl.conf /etc/nginx/
 
 # --- Install php7.3
 RUN echo "------- Installing php7.3 -------" \ 
@@ -24,7 +25,10 @@ RUN echo "------- Installing php7.3 -------" \
                    php-apcu imagemagick php-imagick
 
 # Using own nextcloud.conf, customize yourself
-COPY nextcloud.conf /etc/nginx/conf.d/
+COPY files/nextcloud.conf /etc/nginx/conf.d/
+# Using letsencrypt, customization is postponed.
+COPY files/letsencrypt.conf /etc/nginx/conf.d/
+
 
 #  Some additional debug tools are added
 RUN echo "starting to install some useful monitoring tools" \
@@ -32,6 +36,6 @@ RUN echo "starting to install some useful monitoring tools" \
  && apt -y install procps net-tools socat less \
  && apt -y install php7.3-cli \
  && echo "Finished extra install"
-COPY bash_aliases.sh /etc/profile.d/
+COPY files/bash_aliases.sh /etc/profile.d/
 
 
