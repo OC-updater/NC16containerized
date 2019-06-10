@@ -1,5 +1,7 @@
 #FROM debian:stretch-slim
-FROM debian:stretch AS runner
+#FROM debian:stretch AS runner
+FROM bitnami/minideb:stretch
+#FROM bitnami/minideb-extras-base:stretch
 
 # --- Install nginx
 RUN apt update \
@@ -21,11 +23,15 @@ RUN echo "------- Installing php7.3 -------" \
                    php7.3-intl php7.3-mbstring php7.3-json php7.3-bz2 php7.3-ldap \
                    php-apcu imagemagick php-imagick
 
-#  Some addinal debug tools are added
+# Using own nextcloud.conf, customize yourself
+COPY nextcloud.conf /etc/nginx/conf.d/
+
+#  Some additional debug tools are added
 RUN echo "starting to install some useful monitoring tools" \
  && apt update \
  && apt -y install procps net-tools socat less \
  && apt -y install php7.3-cli \
  && echo "Finished extra install"
+COPY bash_aliases.sh /etc/profile.d/
 
 
