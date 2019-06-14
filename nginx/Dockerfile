@@ -56,9 +56,9 @@ RUN echo "------- Installing Nextcloud V16.0.x -------" \
  && curl -L -k $NC_URL/latest-$NC_VER.tar.bz2 | tar -xjf - -C $NC_BASE_DIR \
  && mkdir $NC_BASE_DIR/.well-known \
  && chown -R www-data:www-data $NC_BASE_DIR \
- && mkdir /var/letsencrypt \
- && chown -R www-data:www-data /var/letsencrypt \
- && ln -s /var/letsencrypt $NC_BASE_DIR/.well-known/acme-challenge 
+ && mkdir -p /var/letsencrypt/.well-known/acme-challenge \
+ && chown -R www-data:www-data /var/letsencrypt 
+# && ln -s /var/letsencrypt $NC_BASE_DIR/.well-known/acme-challenge 
   
 
 # just for debugging purposes
