@@ -1,0 +1,8 @@
+request:
+  provider: https://acme-staging.api.letsencrypt.org/directory
+  key:
+    type: rsa
+  challenge:
+    webroot-paths:
+    - /var/letsencrypt/.well-known/acme-challenge
+

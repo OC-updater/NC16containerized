@@ -40,6 +40,8 @@ COPY files/letsencrypt.conf /etc/nginx/conf.d/
 COPY files/dhparam.pem /etc/ssl/certs/
 COPY files/nc.crt /etc/ssl/certs/
 COPY files/nc.key /etc/ssl/private/
+# Copy all shell-scripts for further configuration to /usr/local/bin
+COPY files/*.sh /usr/local/bin/
 
 # --- Install Acmetools latest Version
 RUN echo "------- Installing acmetools -------" \
@@ -47,6 +49,8 @@ RUN echo "------- Installing acmetools -------" \
  && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 9862409EF124EC763B84972FF5AC9651EDB58DFA \
  && apt update \
  && apt -y install acmetool
+COPY files/acme-target /var/lib/acme/conf/
+
 
 # --- Install Nextcloud latest Version of 16 + preparation for letsencrypt-acme
 RUN echo "------- Installing Nextcloud V16.0.x -------" \
