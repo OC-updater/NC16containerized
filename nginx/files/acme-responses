@@ -6,16 +6,16 @@
 # You will typically want to use --response-file with --stdio or --batch.
 # For dialogs not requiring a response, but merely acknowledgement, specify true.
 # This file is YAML. Note that JSON is a subset of YAML.
-"acme-enter-email": "hostmaster@example.com"
+"acme-enter-email": "letsencrypt@my.dtx.at"
 "acme-agreement:https://letsencrypt.org/documents/LE-SA-v1.2-November-15-2017.pdf": true
 "acmetool-quickstart-choose-server": https://acme-staging.api.letsencrypt.org/directory
-"acmetool-quickstart-choose-method": redirector
+"acmetool-quickstart-choose-method": webroot
 # This is only used if "acmetool-quickstart-choose-method" is "webroot".
-"acmetool-quickstart-webroot-path": "/var/www/foo/bar/.well-known/acme-challenge"
+"acmetool-quickstart-webroot-path": "/var/letsencrypt/.well-known/acme-challenge"
 "acmetool-quickstart-complete": true
 "acmetool-quickstart-install-cronjob": true
 "acmetool-quickstart-install-haproxy-script": true
 "acmetool-quickstart-install-redirector-systemd": true
-"acmetool-quickstart-key-type": ecdsa
-"acmetool-quickstart-rsa-key-size": 4096
+"acmetool-quickstart-key-type": rsa
+"acmetool-quickstart-rsa-key-size": 2048
 "acmetool-quickstart-ecdsa-curve": nistp256
