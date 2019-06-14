@@ -44,12 +44,13 @@ COPY files/nc.key /etc/ssl/private/
 COPY files/*.sh /usr/local/bin/
 
 # --- Install Acmetools latest Version
-RUN echo "------- Installing acmetools -------" \
- && echo "deb http://ppa.launchpad.net/hlandau/rhea/ubuntu xenial main" | tee /etc/apt/sources.list.d/rhea.list \
- && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 9862409EF124EC763B84972FF5AC9651EDB58DFA \
- && apt update \
- && apt -y install acmetool
-COPY files/acme-target /var/lib/acme/conf/
+#RUN echo "------- Installing acmetools -------" \
+# && echo "deb http://ppa.launchpad.net/hlandau/rhea/ubuntu xenial main" | tee /etc/apt/sources.list.d/rhea.list \
+# && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 9862409EF124EC763B84972FF5AC9651EDB58DFA \
+# && apt update \
+# && apt -y install acmetool
+#COPY files/acme-target /var/lib/acme/conf/target
+#COPY files/acme-responses /var/lib/acme/conf/responses
 
 
 # --- Install Nextcloud latest Version of 16 + preparation for letsencrypt-acme
@@ -76,5 +77,14 @@ RUN echo "starting to install some useful monitoring tools" \
  && ln /etc/profile.d/bash_aliases.sh /usr/local/bin/aliases \
  && chmod 0755 /usr/local/bin/aliases \
  && echo "Finished extra install"
+
+# --- Install Acmetools latest Version
+RUN echo "------- Installing acmetools -------" \
+ && echo "deb http://ppa.launchpad.net/hlandau/rhea/ubuntu xenial main" | tee /etc/apt/sources.list.d/rhea.list \
+ && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 9862409EF124EC763B84972FF5AC9651EDB58DFA \
+ && apt update \
+ && apt -y install acmetool
+COPY files/acme-target /var/lib/acme/conf/target
+COPY files/acme-responses /var/lib/acme/conf/responses
 
 
