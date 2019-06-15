@@ -41,7 +41,7 @@ COPY files/dhparam.pem /etc/ssl/certs/
 COPY files/nc.crt /etc/ssl/certs/
 COPY files/nc.key /etc/ssl/private/
 # Copy all shell-scripts for further configuration to /usr/local/bin
-COPY files/*.sh /usr/local/bin/
+#COPY files/*.sh /usr/local/bin/
 
 # --- Install Acmetools latest Version
 #RUN echo "------- Installing acmetools -------" \
@@ -87,4 +87,6 @@ RUN echo "------- Installing acmetools -------" \
 COPY files/acme-target /var/lib/acme/conf/target
 COPY files/acme-responses /var/lib/acme/conf/responses
 
+# Copy all shell-scripts for further configuration to /usr/local/bin
+COPY files/*.sh /usr/local/bin/
 
