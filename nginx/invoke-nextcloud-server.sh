@@ -16,8 +16,9 @@ docker build -t nc .
 # -e ENV-Vars of this image, see README.md (no ENV-Vars, yet)
 # -v connect persistent volume for data storage
 # -p publish the network port (80,443)
+# -d dettach terminal
 docker run --name nextcloud \
-	-v ~/work/NCcontainerized/nginx/persistent:/opt/nextcloud/data \
+	-v ~/work/NC16containerized/nginx/persistent:/opt/nextcloud/data \
 	-p 80:80 -p 443:443 \
 	nc:latest
 

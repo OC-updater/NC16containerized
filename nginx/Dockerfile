@@ -6,6 +6,7 @@ FROM bitnami/minideb:stretch
 ENV NC_VER 16
 ENV NC_URL https://download.nextcloud.com/server/releases
 ENV NC_BASE_DIR /opt
+ENV NC_ROOTDIR /opt/nextcloud
 
 # --- Install nginx
 RUN apt update \
@@ -59,7 +60,9 @@ RUN echo "------- Installing Nextcloud V16.0.x -------" \
 # && tar -xjf $NC_BASE_DIR/latest-$NC_VER.tar.bz2 -C /opt \
 # && rm latest-$NC_VER.tar.bz2
  && curl -L -k $NC_URL/latest-$NC_VER.tar.bz2 | tar -xjf - -C $NC_BASE_DIR \
- && mkdir $NC_BASE_DIR/.well-known \
+ && mkdir -p -m 0775 /var/log/nextcloud \
+ && chgrp www-data /var/log/nextcloud \
+# && mkdir $NC_ROOTDIR/.well-known \
  && chown -R www-data:www-data $NC_BASE_DIR \
  && mkdir -p /var/letsencrypt/.well-known/acme-challenge \
  && chown -R www-data:www-data /var/letsencrypt 

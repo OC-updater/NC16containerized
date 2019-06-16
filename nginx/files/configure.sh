@@ -28,9 +28,10 @@ sed -i "s/max_input_time =.*/max_input_time = 3600/" $CLI_PHP_INI
 sed -i "s/post_max_size =.*/post_max_size = 10240M/" $CLI_PHP_INI
 sed -i "s/upload_max_filesize =.*/upload_max_filesize = 10240M/" $CLI_PHP_INI
 sed -i "s/max_file_uploads =.*/max_file_uploads = 100/" $CLI_PHP_INI
-sed -i "s/;date.timezone.*/date.timezone = Europe\/\Berlin/" $CLI_PHP_INI
+sed -i "s/;date.timezone.*/date.timezone = Europe\/\Vienna/" $CLI_PHP_INI
 sed -i "s/;session.cookie_secure.*/session.cookie_secure = True/" $CLI_PHP_INI
-sed -i "s/;session.save_path =.*/session.save_path = \"N;700;\/var\/local\/tmp\/sessions\"/" $CLI_PHP_INI
+#sed -i "s/;session.save_path =.*/session.save_path = \"N;700;\/var\/local\/tmp\/sessions\"/" $CLI_PHP_INI
+sed -i "s/;session.save_path =/session.save_path =/" $CLI_PHP_INI
 sed -i '$aapc.enable_cli = 1' $CLI_PHP_INI
 sed -i "s/memory_limit = 128M/memory_limit = 512M/" $FPM_PHP_INI
 sed -i "s/output_buffering =.*/output_buffering = 'Off'/" $FPM_PHP_INI
@@ -39,7 +40,7 @@ sed -i "s/max_input_time =.*/max_input_time = 3600/" $FPM_PHP_INI
 sed -i "s/post_max_size =.*/post_max_size = 10240M/" $FPM_PHP_INI
 sed -i "s/upload_max_filesize =.*/upload_max_filesize = 10240M/" $FPM_PHP_INI
 sed -i "s/max_file_uploads =.*/max_file_uploads = 100/" $FPM_PHP_INI
-sed -i "s/;date.timezone.*/date.timezone = Europe\/\Berlin/" $FPM_PHP_INI
+sed -i "s/;date.timezone.*/date.timezone = Europe\/\Vienna/" $FPM_PHP_INI
 sed -i "s/;session.cookie_secure.*/session.cookie_secure = True/" $FPM_PHP_INI
 sed -i "s/;opcache.enable=.*/opcache.enable=1/" $FPM_PHP_INI
 sed -i "s/;opcache.enable_cli=.*/opcache.enable_cli=1/" $FPM_PHP_INI
@@ -48,7 +49,8 @@ sed -i "s/;opcache.interned_strings_buffer=.*/opcache.interned_strings_buffer=8/
 sed -i "s/;opcache.max_accelerated_files=.*/opcache.max_accelerated_files=10000/" $FPM_PHP_INI
 sed -i "s/;opcache.revalidate_freq=.*/opcache.revalidate_freq=1/" $FPM_PHP_INI
 sed -i "s/;opcache.save_comments=.*/opcache.save_comments=1/" $FPM_PHP_INI
-sed -i "s/;session.save_path =.*/session.save_path = \"N;700;\/var\/local\/tmp\/sessions\"/" $FPM_PHP_INI
+#sed -i "s/;session.save_path =.*/session.save_path = \"N;700;\/var\/local\/tmp\/sessions\"/" $FPM_PHP_INI
+sed -i "s/;session.save_path =/session.save_path =/" $FPM_PHP_INI
 sed -i "s/;emergency_restart_threshold =.*/emergency_restart_threshold = 10/" $FPM_PHP_INI
 sed -i "s/;emergency_restart_interval =.*/emergency_restart_interval = 1m/" $FPM_PHP_INI
 sed -i "s/;process_control_timeout =.*/process_control_timeout = 10s/" $FPM_PHP_INI
@@ -67,7 +69,7 @@ sed -i '$aapc.max_file_size=5M' $FPM_PHP_INI
 sed -i '$aapc.cache_by_default=1' $FPM_PHP_INI
 sed -i '$aapc.use_request_time=1' $FPM_PHP_INI
 sed -i '$aapc.slam_defense=0' $FPM_PHP_INI
-sed -i '$aapc.mmap_file_mask=/var/local/tmp/apc/apc.XXXXXX' $FPM_PHP_INI
+#sed -i '$aapc.mmap_file_mask=/var/local/tmp/apc/apc.XXXXXX' $FPM_PHP_INI
 sed -i '$aapc.stat_ctime=0' $FPM_PHP_INI
 sed -i '$aapc.canonicalize=1' $FPM_PHP_INI
 sed -i '$aapc.write_lock=1' $FPM_PHP_INI
@@ -89,5 +91,5 @@ sed -i "s/rights\=\"none\" pattern\=\"PDF\"/rights\=\"read\|write\" pattern\=\"P
 UID_WWW_DATA = $(id www-data)
 FILE_FSTAB   = /etc/fstab
 
-sed -i '$atmpfs /var/local/tmp/apc tmpfs defaults,uid=${UID_WWW_DATA},size=300M,noatime,nosuid,nodev,noexec,mode=1777 0 0' $FILE_FSTAB
-sed -i '$atmpfs /var/local/tmp/sessions tmpfs defaults,uid=${UID_WWW_DATA},size=300M,noatime,nosuid,nodev,noexec,mode=1777 0 0' $FILE_FSTAB
+#sed -i '$atmpfs /var/local/tmp/apc tmpfs defaults,uid=${UID_WWW_DATA},size=300M,noatime,nosuid,nodev,noexec,mode=1777 0 0' $FILE_FSTAB
+#sed -i '$atmpfs /var/local/tmp/sessions tmpfs defaults,uid=${UID_WWW_DATA},size=300M,noatime,nosuid,nodev,noexec,mode=1777 0 0' $FILE_FSTAB

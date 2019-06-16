@@ -1,15 +1,16 @@
 #!/bin/bash
 
-NC_ROOT="/opt/nextcloud"
-OCC="/opt/nextcloud/occ"
+NC_ROOT="${NC_ROOTDIR:=/opt/nextcloud}"
+NC_DATA="${NC_DATADIR:=/opt/nextcloud/data}"
+OCC="${NC_ROOT}/occ"
 
-su - www-data -s /bin/bash -c "php $OCC maintenance:install --database 'mysql' --database-name 'nextcloud' --database-host '172.17.0.2' --database-user 'nextcloud' --database-pass 'next123cloud' --admin-user 'admin' --admin-pass 'admin345admin' --data-dir '/opt/nextcloud/data'"
+su - www-data -s /bin/bash -c "php $OCC maintenance:install --database ${NC_DATABASE:-mysql} --database-name ${NC_DBNAME:-nextcloud} --database-host ${NC_DBHOST:-172.17.0.2} --database-user ${NC_DBUSER:-nextcloud} --database-pass ${NC_DBPASSWD:-next123cloud} --admin-user ${NC_ADMINUSER:-admin} --admin-pass ${NC_ADMINPASSWD:-admin345admin} --data-dir $NC_DATA"
 su - www-data -s /bin/bash -c "php $OCC config:system:set trusted_domains 1 --value=nc.dtx.at"
 su - www-data -s /bin/bash -c "php $OCC config:system:set overwrite.cli.url --value=https://nc.dtx.at"
 
 # writeing config.php
-sed -i 's/^[ ]*//' /opt/nextcloud/config/config.php
-sed -i '/);/d' /opt/nextcloud/config/config.php
+sed -i 's/^[ ]*//' ${NC_ROOT}/config/config.php
+sed -i '/);/d' ${NC_ROOT}/config/config.php
 
 cat <<EOF >>$NC_ROOT/config/config.php
 'activity_expire_days' => 14,
