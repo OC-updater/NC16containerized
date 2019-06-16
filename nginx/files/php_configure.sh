@@ -2,10 +2,10 @@
 
 
 # -------------------- configs 4 PHP -------------------------
-WWW_CONF    = "/etc/php/7.3/fpm/pool.d/www.conf"
-CLI_PHP_INI = "/etc/php/7.3/cli/php.ini"
-FPM_PHP_INI = "/etc/php/7.3/fpm/php.ini"
-FPM_PHP_FPM = "/etc/php/7.3/fpm/php-fpm.conf"
+WWW_CONF="/etc/php/7.3/fpm/pool.d/www.conf"
+CLI_PHP_INI="/etc/php/7.3/cli/php.ini"
+FPM_PHP_INI="/etc/php/7.3/fpm/php.ini"
+FPM_PHP_FPM="/etc/php/7.3/fpm/php-fpm.conf"
 
 cp $WWW_CONF $WWW_CONF.bak
 cp $CLI_PHP_INI $CLI_PHP_INI.bak
@@ -88,8 +88,8 @@ sed -i "s/rights\=\"none\" pattern\=\"PDF\"/rights\=\"read\|write\" pattern\=\"P
 
 # -------------------- configs 4 /etc/fstab -------------------------
 
-UID_WWW_DATA = $(id www-data)
-FILE_FSTAB   = /etc/fstab
+UID_WWW_DATA=$(id www-data)
+FILE_FSTAB="/etc/fstab"
 
 #sed -i '$atmpfs /var/local/tmp/apc tmpfs defaults,uid=${UID_WWW_DATA},size=300M,noatime,nosuid,nodev,noexec,mode=1777 0 0' $FILE_FSTAB
 #sed -i '$atmpfs /var/local/tmp/sessions tmpfs defaults,uid=${UID_WWW_DATA},size=300M,noatime,nosuid,nodev,noexec,mode=1777 0 0' $FILE_FSTAB
