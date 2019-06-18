@@ -78,7 +78,7 @@ COPY files/bash_aliases.sh /etc/profile.d/
 #  Some additional debug tools are added
 RUN echo "starting to install some useful monitoring tools" \
  && apt update \
- && apt -y install procps net-tools socat less \
+ && apt -y install procps net-tools socat less atop iftop \
  && apt -y install vim dnsutils iputils-ping iproute2 php7.3-cli \
  && ln /etc/profile.d/bash_aliases.sh /usr/local/bin/aliases \
  && chmod 0755 /usr/local/bin/aliases \
