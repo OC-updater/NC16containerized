@@ -75,10 +75,10 @@ sed -i "s/output_buffering=.*/output_buffering='Off'/" $NC_ROOT/.user.ini
 service php7.3-fpm restart && service nginx restart
 
 # adjust Nextcloud apps
-su - www-data -s /bin/bash -c 'php $OCC app:disable survey_client'
-su - www-data -s /bin/bash -c 'php $OCC app:disable firstrunwizard'
-su - www-data -s /bin/bash -c 'php $OCC app:enable admin_audit'
-su - www-data -s /bin/bash -c 'php $OCC app:enable files_pdfviewer'
+su - www-data -s /bin/bash -c "php $OCC app:disable survey_client"
+su - www-data -s /bin/bash -c "php $OCC app:disable firstrunwizard"
+su - www-data -s /bin/bash -c "php $OCC app:enable admin_audit"
+su - www-data -s /bin/bash -c "php $OCC app:enable files_pdfviewer"
 
 
 
