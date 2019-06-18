@@ -93,3 +93,7 @@ FILE_FSTAB="/etc/fstab"
 
 #sed -i '$atmpfs /var/local/tmp/apc tmpfs defaults,uid=${UID_WWW_DATA},size=300M,noatime,nosuid,nodev,noexec,mode=1777 0 0' $FILE_FSTAB
 #sed -i '$atmpfs /var/local/tmp/sessions tmpfs defaults,uid=${UID_WWW_DATA},size=300M,noatime,nosuid,nodev,noexec,mode=1777 0 0' $FILE_FSTAB
+
+service php7.3-fpm stop ; sleep 1
+service php7.3-fpm start
+

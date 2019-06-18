@@ -5,6 +5,12 @@ NGINX_SSL_CONF="/etc/nginx/ssl.conf"
 ACMETOOL=$(which acmetool)
 ACME_STATE_DIR=$($ACMETOOL status | grep ACME_STATE_DIR| cut -d' ' -f4)
 
+service nginx status
+case "$?" in
+	0) echo "service nginx already started" ;;
+	3) echo "service nginx not started yet" && service nginx start ;;
+esac 
+
 $ACMETOOL --batch quickstart
 $ACMETOOL want ${NC_FQDN[@]}
 

@@ -31,7 +31,9 @@ RUN echo "------- Installing php7.3 -------" \
  && apt update \
  && apt -y install php7.3 php7.3-fpm php7.3-gd php7.3-mysql php7.3-curl php7.3-xml php7.3-zip \
                    php7.3-intl php7.3-mbstring php7.3-json php7.3-bz2 php7.3-ldap \
-                   php-apcu imagemagick php-imagick
+                   php-apcu imagemagick php-imagick \
+# && sed -i "s/NAME=php-fpm7.3/NAME=php7.3-fpm/g" /etc/init.d/php7.3-fpm \
+ && echo "------- Installing php7.3 finished -------"
 
 # Using own nextcloud.conf, customize yourself
 COPY files/nextcloud.conf /etc/nginx/conf.d/
@@ -45,13 +47,13 @@ COPY files/nc.key /etc/ssl/private/
 #COPY files/*.sh /usr/local/bin/
 
 # --- Install Acmetools latest Version
-#RUN echo "------- Installing acmetools -------" \
-# && echo "deb http://ppa.launchpad.net/hlandau/rhea/ubuntu xenial main" | tee /etc/apt/sources.list.d/rhea.list \
-# && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 9862409EF124EC763B84972FF5AC9651EDB58DFA \
-# && apt update \
-# && apt -y install acmetool
-#COPY files/acme-target /var/lib/acme/conf/target
-#COPY files/acme-responses /var/lib/acme/conf/responses
+RUN echo "------- Installing acmetools -------" \
+ && echo "deb http://ppa.launchpad.net/hlandau/rhea/ubuntu xenial main" | tee /etc/apt/sources.list.d/rhea.list \
+ && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 9862409EF124EC763B84972FF5AC9651EDB58DFA \
+ && apt update \
+ && apt -y install acmetool
+COPY files/acme-target /var/lib/acme/conf/target
+COPY files/acme-responses /var/lib/acme/conf/responses
 
 
 # --- Install Nextcloud latest Version of 16 + preparation for letsencrypt-acme
@@ -65,8 +67,9 @@ RUN echo "------- Installing Nextcloud V16.0.x -------" \
 # && mkdir $NC_ROOTDIR/.well-known \
  && chown -R www-data:www-data $NC_BASE_DIR \
  && mkdir -p /var/letsencrypt/.well-known/acme-challenge \
- && chown -R www-data:www-data /var/letsencrypt 
-# && ln -s /var/letsencrypt $NC_BASE_DIR/.well-known/acme-challenge 
+ && chown -R www-data:www-data /var/letsencrypt \
+# && ln -s /var/letsencrypt $NC_BASE_DIR/.well-known/acme-challenge \
+ && echo "--------- Finished Nextcloud V16.0.x install ----------------"
   
 
 # just for debugging purposes
@@ -79,16 +82,9 @@ RUN echo "starting to install some useful monitoring tools" \
  && apt -y install vim dnsutils iputils-ping iproute2 php7.3-cli \
  && ln /etc/profile.d/bash_aliases.sh /usr/local/bin/aliases \
  && chmod 0755 /usr/local/bin/aliases \
+ && usermod -s /bin/bash www-data \
+ && usermod -d ${NC_ROOTDIR} www-data \
  && echo "Finished extra install"
-
-# --- Install Acmetools latest Version
-RUN echo "------- Installing acmetools -------" \
- && echo "deb http://ppa.launchpad.net/hlandau/rhea/ubuntu xenial main" | tee /etc/apt/sources.list.d/rhea.list \
- && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 9862409EF124EC763B84972FF5AC9651EDB58DFA \
- && apt update \
- && apt -y install acmetool
-COPY files/acme-target /var/lib/acme/conf/target
-COPY files/acme-responses /var/lib/acme/conf/responses
 
 # Copy all shell-scripts for further configuration to /usr/local/bin
 COPY files/*.sh /usr/local/bin/
