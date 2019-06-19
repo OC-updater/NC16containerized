@@ -2,6 +2,9 @@
 
 NC_ROOT="${NC_ROOTDIR:=/opt/nextcloud}"
 NC_DATA="${NC_DATADIR:=/opt/nextcloud/data}"
+NC_REDIS="${NC_REDIS_HOST:-172.17.0.3}"
+NC_REDPO="${NC_REDIS_PORT:-6379}"
+NC_REDPW="${NC_REDIS_PASS:-SVRMB36F56v3Ahi7la9qZ0xjthuOmOFyTSSUPEdHwU}"
 OCC="${NC_ROOT}/occ"
 
 su - www-data -s /bin/bash -c "php $OCC maintenance:install --database ${NC_DATABASE:-mysql} --database-name ${NC_DBNAME:-nextcloud} --database-host ${NC_DBHOST:-172.17.0.2} --database-user ${NC_DBUSER:-nextcloud} --database-pass ${NC_DBPASSWD:-next123cloud} --admin-user ${NC_ADMINUSER:-admin} --admin-pass ${NC_ADMINPASSWD:-admin345admin} --data-dir $NC_DATA"
@@ -54,8 +57,9 @@ cat <<EOF >>$NC_ROOT/config/config.php
 'preview_max_scale_factor' => 1,
 'redis' => 
 	array (
-		'host' => '/var/run/redis/redis.sock',
-		'port' => 0,
+		'host' => "$NC_REDIS",
+		'port' => "$NC_REDPO",
+		'password' => "$NC_REDPW",
 		'timeout' => 0.0,
 	),
 'quota_include_external_storage' => false,
