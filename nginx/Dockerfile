@@ -3,6 +3,7 @@
 FROM bitnami/minideb:stretch
 #FROM bitnami/minideb-extras-base:stretch
 
+ARG NC_REDIS_PASS="SVRMB36F56v3Ahi7la9qZ0xjthuOmOFyTSSUPEdHwU"
 ENV NC_VER 16
 ENV NC_URL https://download.nextcloud.com/server/releases
 ENV NC_BASE_DIR /opt

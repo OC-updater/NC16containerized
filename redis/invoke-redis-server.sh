@@ -25,3 +25,6 @@ docker run --name redis-server \
 #example:
 docker run --name redis-server -e ALLOW_EMPTY_PASSWORD=yes redis
 
+#example client
+docker run -it redis redis-cli -h 172.17.0.3
+

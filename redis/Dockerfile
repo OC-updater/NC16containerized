@@ -1,6 +1,7 @@
 FROM bitnami/minideb-extras-base:stretch
 LABEL maintainer "Bitnami <containers@bitnami.com>"
 
+ARG NC_REDIS_PASS="SVRMB36F56v3Ahi7la9qZ0xjthuOmOFyTSSUPEdHwU"
 ENV BITNAMI_PKG_CHMOD="-R g+rwX" \
     HOME="/" \
     OS_ARCH="amd64" \
