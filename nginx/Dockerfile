@@ -81,6 +81,7 @@ RUN echo "starting to install some useful monitoring tools" \
  && apt update \
  && apt -y install procps net-tools socat less atop iftop \
  && apt -y install vim dnsutils iputils-ping iproute2 php7.3-cli \
+ && apt -y install anacron \
  && ln /etc/profile.d/bash_aliases.sh /usr/local/bin/aliases \
  && chmod 0755 /usr/local/bin/aliases \
  && usermod -s /bin/bash www-data \
@@ -89,4 +90,8 @@ RUN echo "starting to install some useful monitoring tools" \
 
 # Copy all shell-scripts for further configuration to /usr/local/bin
 COPY files/*.sh /usr/local/bin/
+COPY files/entrypoint.sh /
+
+ENTRYPOINT [ "/entrypoint.sh" ]
+CMD [ "/bin/bash" ]
 
