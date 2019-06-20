@@ -16,12 +16,15 @@ setup() {
            . $BIN_SH/$NC_CONF
        fi
    done
-   echo "Installation successful finished"
+   echo " ----------- ------------ -----------"
+   echo "|  Installation successful finished  |"
+   echo " ----------- ------------ -----------"
 }
 
 
 if [ ! -f "$NC_CONF/config.php" ]; then
-	setup
+   echo "----------- Setup started -----------"
+   setup
 fi
 
 for SERV in php7.3-fpm nginx; do 
@@ -31,5 +34,6 @@ done
 #nginx -g 'daemon off;'
 
 #exec /bin/bash
+bash
 
-sleep 1d
+#sleep 1d

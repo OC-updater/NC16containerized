@@ -2,14 +2,18 @@
 
 NC_ROOT="${NC_ROOTDIR:=/opt/nextcloud}"
 NC_DATA="${NC_DATADIR:=/opt/nextcloud/data}"
+NC_FQDN="${NC_DOMAIN:=nc.dtx.at}"
+NC_MAILS="${NC_MAILSERVER:=mail.dtx.at}"
+NC_MAILP="${NC_MAILPORT:=25}"
 NC_REDIS="${NC_REDIS_HOST:-172.17.0.3}"
 NC_REDPO="${NC_REDIS_PORT:-6379}"
 NC_REDPW="${NC_REDIS_PASS:-SVRMB36F56v3Ahi7la9qZ0xjthuOmOFyTSSUPEdHwU}"
 OCC="${NC_ROOT}/occ"
 
 su - www-data -s /bin/bash -c "php $OCC maintenance:install --database ${NC_DATABASE:-mysql} --database-name ${NC_DBNAME:-nextcloud} --database-host ${NC_DBHOST:-172.17.0.2} --database-user ${NC_DBUSER:-nextcloud} --database-pass ${NC_DBPASSWD:-next123cloud} --admin-user ${NC_ADMINUSER:-admin} --admin-pass ${NC_ADMINPASSWD:-admin345admin} --data-dir $NC_DATA"
-su - www-data -s /bin/bash -c "php $OCC config:system:set trusted_domains 1 --value=nc.dtx.at"
-su - www-data -s /bin/bash -c "php $OCC config:system:set overwrite.cli.url --value=https://nc.dtx.at"
+su - www-data -s /bin/bash -c "php $OCC config:system:set trusted_domains 1 --value=$NC_FQDN"
+su - www-data -s /bin/bash -c "php $OCC config:system:set trusted_domains 2 --value=nextcloud.dtx.at"
+su - www-data -s /bin/bash -c "php $OCC config:system:set overwrite.cli.url --value=https://$NC_FQDN"
 
 # writeing config.php
 sed -i 's/^[ ]*//' ${NC_ROOT}/config/config.php
@@ -68,6 +72,13 @@ cat <<EOF >>$NC_ROOT/config/config.php
 'theme' => '',
 'trashbin_retention_obligation' => 'auto, 7',
 'updater.release.channel' => 'stable',
+'mail_smtpmode' => 'smtp',
+'mail_smtpsecure' => 'tls',
+'mail_sendmailmode' => 'smtp',
+'mail_from_address' => 'nextcloud',
+'mail_domain' => "$NC_FQDN",
+'mail_smtphost' => "$NC_MAILS",
+'mail_smtpport' => "$NC_MAILP",
 );
 EOF
 
