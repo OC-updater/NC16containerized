@@ -25,7 +25,8 @@
 # NC_LETSENCRYPT=<0|1>  1 ... getting real certs, 0 ... getting test certs
 # NC_CONTAINER=<container name>
 # NC_NAME=<docker-server-name>
-# NC_PV=<Path to PV of nextcloud-data>
+# NC_DATA_PV=<Path to PV of nextcloud-data>
+# NC_CONFIG_PV=<Path to PV of nextcloud-config>
 
 
 # Creating the container:
@@ -45,6 +46,8 @@
 #	-e MARIADB_DATABASE=${MARIADB_DB:=nextcloud} -e MARIADB_USER=${MARIADB_DBUSER:=nextcloud} -e MARIADB_PASSWORD=${MARIADB_DBPASSWD} \
 #	-v ${MARIADB_PV}:/bitnami/mariadb ${MARIADB_CONTAINER:=bmdb}:latest
 # 3. nginx
-# docker run --name ${NC_NAME:=nextcloud} -e LETSENCRYPT=${NC_LETSENCRYPT:=0} -p 80:80 -p 443:443 -v ${NC_PV}:/opt/nextcloud/data ${NC_CONTAINER:=nc}:latest
+# docker run --name ${NC_NAME:=nextcloud} -e LETSENCRYPT=${NC_LETSENCRYPT:=0} -p 80:80 -p 443:443 \ 
+#	-v ${NC_CONFIG_PV}:/opt/nextcloud/config -v ${NC_DATA_PV}:/opt/nextcloud/data ${NC_CONTAINER:=nc}:latest
+# docker run --name ${NC_NAME:=nextcloud} -e LETSENCRYPT=${NC_LETSENCRYPT:=0} -p 80:80 -p 443:443 -v ${NC_CONFIG_PV}:/opt/nextcloud/config -v ${NC_DATA_PV}:/opt/nextcloud/data ${NC_CONTAINER:=nc}:latest
 #
 
