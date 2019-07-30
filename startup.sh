@@ -7,9 +7,9 @@ DEBUG=1
 #############
 # Fixed Variables for this maschine
 #############
-WORKING_DIR="/home/dominik/work/NC16containerized"
 MY_UID=nextcloud
 MY_UID_N=$(id -u ${MY_UID})
+WORKING_DIR="/home/${MY_UID}/work/NC16containerized"
 
 # this startup-script will build all container in each subdirectory
 # and start them up in a correct manner in a docker environment.
@@ -125,11 +125,11 @@ popd
 pushd .
 cd ${WORKING_DIR}
 
-docker run --name ${REDIS_NAME:=redis-server} -e REDIS_PASSWORD=${REDIS_MYPASSWORD} -v ${REDIS_PV}:/bitnami/redis/data ${REDIS_CONTAINER:=redis}:latest
+#docker run --name ${REDIS_NAME:=redis-server} -e REDIS_PASSWORD=${REDIS_MYPASSWORD} -v ${REDIS_PV}:/bitnami/redis/data ${REDIS_CONTAINER:=redis}:latest
 
-docker run --name ${MARIADB_NAME:=mariadb-server} -e MARIADB_ROOT_PASSWORD=${MARIADB_DBROOTPWD} \
-       -e MARIADB_DATABASE=${MARIADB_DB:=nextcloud} -e MARIADB_USER=${MARIADB_DBUSER:=nextcloud} -e MARIADB_PASSWORD=${MARIADB_DBPASSWD} \
-       -v ${MARIADB_PV}:/bitnami/mariadb ${MARIADB_CONTAINER:=bmdb}:latest
+#docker run --name ${MARIADB_NAME:=mariadb-server} -e MARIADB_ROOT_PASSWORD=${MARIADB_DBROOTPWD} \
+#       -e MARIADB_DATABASE=${MARIADB_DB:=nextcloud} -e MARIADB_USER=${MARIADB_DBUSER:=nextcloud} -e MARIADB_PASSWORD=${MARIADB_DBPASSWD} \
+#       -v ${MARIADB_PV}:/bitnami/mariadb ${MARIADB_CONTAINER:=bmdb}:latest
 
 #docker run --name ${NC_NAME:=nextcloud} -e LETSENCRYPT=${NC_LETSENCRYPT:=0} -p 80:80 -p 443:443 -v ${NC_CONFIG_PV}:/opt/nextcloud/config -v ${NC_DATA_PV}:/opt/nextcloud/data ${NC_CONTAINER:=nc}:latest
 
