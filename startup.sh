@@ -10,6 +10,8 @@ DEBUG=1
 MY_UID=nextcloud
 MY_UID_N=$(id -u ${MY_UID})
 WORKING_DIR="/home/${MY_UID}/work/NC16containerized"
+ENV_FILE="$WORKING_DIR/.env-nc"
+
 
 # this startup-script will build all container in each subdirectory
 # and start them up in a correct manner in a docker environment.
@@ -76,6 +78,17 @@ function usage() {
 	echo "$0 [-p] [-h|-?]"
 	echo "option -p : asking for new Passwords, generating sha256 strings"
 	echo "option -h,-? : show this help"
+}
+
+# clean old env-files
+# and create new one with accurate values
+function writeenvfile() {
+	if [ -f $ENV_FILE ]; then
+		rm -f $ENV_FILE;
+	fi
+	echo NC_REDIS_PASS=${REDIS_MYPASSWORD} >> $ENV_FILE
+	echo NC_MARIADB_PASS=${MARIADB_DBPASSWD} >> $ENV_FILE
+	echo NC_MARIADB_ROOT=${MARIADB_DBROOTPWD} >> $ENV_FILE
 }
 
 # Call getopt to validate the provided input.
