@@ -1,16 +1,32 @@
 #!/bin/bash
 
+#
+# All Variables
+#
 NC_ROOT="${NC_ROOTDIR:=/opt/nextcloud}"
 NC_DATA="${NC_DATADIR:=/opt/nextcloud/data}"
 NC_FQDN="${NC_DOMAIN:=nc.dtx.at}"
 NC_MAILS="${NC_MAILSERVER:=mail.dtx.at}"
 NC_MAILP="${NC_MAILPORT:=25}"
-NC_REDIS="${NC_REDIS_HOST:-172.17.0.3}"
+NC_ADMINUSER="${NC_ADMIN_USER:-admin}"
+NC_ADMINPASSWD="${NC_ADMIN_PASS:-admin345admin}"
+
+NC_REDIS="${NC_REDIS_HOST:-172.17.0.2}"
 NC_REDPO="${NC_REDIS_PORT:-6379}"
 NC_REDPW="${NC_REDIS_PASS:-SVRMB36F56v3Ahi7la9qZ0xjthuOmOFyTSSUPEdHwU}"
+
+NC_DATABASE="mysql"
+NC_DBHOST="${NC_DB_HOST:-172.17.0.3}"
+NC_DBNAME="${NC_DB_NAME:-nextcloud}"
+NC_DBUSER="${NC_DB_USER:-nextcloud}"
+NC_DBPASSWD="${NC_DB_PASS:-next123cloud}"
+
 OCC="${NC_ROOT}/occ"
 
-su - www-data -s /bin/bash -c "php $OCC maintenance:install --database ${NC_DATABASE:-mysql} --database-name ${NC_DBNAME:-nextcloud} --database-host ${NC_DBHOST:-172.17.0.2} --database-user ${NC_DBUSER:-nextcloud} --database-pass ${NC_DBPASSWD:-next123cloud} --admin-user ${NC_ADMINUSER:-admin} --admin-pass ${NC_ADMINPASSWD:-admin345admin} --data-dir $NC_DATA"
+#
+# Configuration start
+#
+su - www-data -s /bin/bash -c "php $OCC maintenance:install --database ${NC_DATABASE} --database-name ${NC_DBNAME} --database-host ${NC_DBHOST} --database-user ${NC_DBUSER} --database-pass ${NC_DBPASSWD} --admin-user ${NC_ADMINUSER} --admin-pass ${NC_ADMINPASSWD} --data-dir $NC_DATA"
 su - www-data -s /bin/bash -c "php $OCC config:system:set trusted_domains 1 --value=$NC_FQDN"
 su - www-data -s /bin/bash -c "php $OCC config:system:set trusted_domains 2 --value=nextcloud.dtx.at"
 su - www-data -s /bin/bash -c "php $OCC config:system:set overwrite.cli.url --value=https://$NC_FQDN"
