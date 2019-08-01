@@ -98,7 +98,8 @@ RUN echo "starting to install some useful monitoring tools" \
 COPY files/*.sh /usr/local/bin/
 COPY files/entrypoint.sh /
 
-USER $NC_UID
+# USER does not work here, we need root.
+#USER $NC_UID
 ENTRYPOINT [ "/entrypoint.sh" ]
 CMD [ "/bin/bash" ]
 
