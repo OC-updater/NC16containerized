@@ -168,17 +168,21 @@ if [ $UID -ne $MY_UID_N ]; then
 	exit 1;
 fi
 
-test $PASS -eq 1 || { echo "Password for Redis should be: " \
+test $PASS -eq 1 && { echo "Password for Redis should be: " \
 	&& REDIS_MYPASSWORD=$(mkpasswd -m sha256crypt | cut -d '$' -f 4 ) && echo "RedisPassword = ${REDIS_MYPASSWORD}"; }
-test $PASS -eq 1 || { echo "Password for MariaDB admin should be: " \
+test $PASS -eq 1 && { echo "Password for MariaDB admin should be: " \
 	&& MARIADB_DBROOTPWD=$(mkpasswd -m sha256crypt | cut -d '$' -f 4 ) && echo "MariaDB admin Password = ${MARIADB_DBROOTPWD}"; }
-test $PASS -eq 1 || { echo "Password for MariaDB database should be: " \
+test $PASS -eq 1 && { echo "Password for MariaDB database should be: " \
 	&& MARIADB_DBPASSWD=$(mkpasswd -m sha256crypt | cut -d '$' -f 4 ) && echo "MariaDB database Password = ${MARIADB_DBPASSWD}"; }
+read -p "Username for Nextcloud Admin should be: [admin] " NC_ADMIN_USER 
+read -s -p "Password for Nextcloud Admin should be: " NC_ADMIN_PASS 
 
 test -z $DEBUG || { 
 	echo "RedisPassword = ${REDIS_MYPASSWORD}"
 	echo "MariaDB admin Password = ${MARIADB_DBROOTPWD}"
 	echo "MariaDB database Password = ${MARIADB_DBPASSWD}"
+	echo "Nextcloud Admin Username = ${NC_ADMIN_USER}"
+	echo "Nextcloud Admin Password = ${NC_ADMIN_PASS}"
 }
 
 #################
@@ -211,7 +215,7 @@ cd ${WORKING_DIR}
 [[ $NC -eq 1 ]] && docker run --name ${NC_NAME:=nextcloud} -e LETSENCRYPT=${NC_LETSENCRYPT:=0} \
 	-e NC_REDIS_PASS=${REDIS_MYPASSWORD} -e NC_REDIS_HOST="172.17.0.2" \
 	-e NC_DB_HOST="172.17.0.3" -e NC_DB_NAME="${MARIADB_DB:=nextcloud}" -e NC_DB_USER="${MARIADB_DBUSER:=nextcloud}" -e NC_DB_PASS=${MARIADB_DBPASSWD} \
-	-e NC_ADMIN_USER="admin" -e NC_ADMIN_PASS="admin345admin" \
+	-e NC_ADMIN_USER="${NC_ADMIN_USER:=admin}" -e NC_ADMIN_PASS="${NC_ADMIN_PASS:=admin345admin}" \
 	-p 80:80 -p 443:443 -v ${NC_CONFIG_PV}:/opt/nextcloud/config -v ${NC_DATA_PV}:/opt/nextcloud/data ${NC_CONTAINER:=nc}:latest
 
 popd
