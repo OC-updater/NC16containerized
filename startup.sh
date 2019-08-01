@@ -57,6 +57,9 @@ NC_DATA_PV="/opt/nextcloud/data"
 NC_CONFIG_PV="/opt/nextcloud/config"
 # NC_UID=<uid of running container>
 NC_UID="1003"
+# default values for admin user/pw of nextcloud container
+NC_ADMIN_USER="admin"
+NC_ADMIN_PASS="admin345"
 
 
 # Creating the container:
@@ -86,9 +89,10 @@ function getnewpw() {
 }
 
 function usage() {
-	echo "$0 [-p] [-h|-?] [-r|--redis <0|1>] [-m|--mariadb <0|1>] [-n|--nextcloud <0|1>]"
+	echo "$0 [-p] [-h|-?] [-f <env_file>] [-r|--redis <0|1>] [-m|--mariadb <0|1>] [-n|--nextcloud <0|1>]"
 	echo "option -p : asking for new Passwords, generating sha256 strings"
 	echo "option -h,-? : show this help"
+	echo "       -f <env_file> : path/filename to env-file"
 	echo "       -r <0|1> : start docker container redis false or true"
 	echo "       -m <0|1> : start docker container mariadb false or true"
 	echo "       -n <0|1> : start docker container nextcloud false or true"
@@ -101,16 +105,18 @@ function writeenvfile() {
 	if [ -f $ENV_FILE ]; then
 		rm -f $ENV_FILE;
 	fi
-	echo NC_REDIS_PASS=${REDIS_MYPASSWORD} >> $ENV_FILE
-	echo NC_MARIADB_PASS=${MARIADB_DBPASSWD} >> $ENV_FILE
-	echo NC_MARIADB_ROOT=${MARIADB_DBROOTPWD} >> $ENV_FILE
+	echo REDIS_MYPASSWORD=${REDIS_MYPASSWORD} >> $ENV_FILE
+	echo MARIADB_DBPASSWD=${MARIADB_DBPASSWD} >> $ENV_FILE
+	echo MARIADB_DBROOTPWD=${MARIADB_DBROOTPWD} >> $ENV_FILE
+	echo NC_ADMIN_USER=${NC_ADMIN_USER:-admin} >> $ENV_FILE
+	echo NC_ADMIN_PASS=${NC_ADMIN_PASS:-admin345} >> $ENV_FILE
 }
 
 #
 # Starting main routine
 #
 # Call getopt to validate the provided input.
-options=$(getopt -o pr:m:n:h? --long help --long redis: --long mariadb: --long nextcloud: -- "$@")
+options=$(getopt -o pf:r:m:n:h? --long help --long redis: --long mariadb: --long nextcloud: -- "$@")
 [ $? -eq 0 ] || {
     echo "Incorrect options provided"
     exit 1
@@ -124,6 +130,19 @@ while true; do
 		-h|--help)
 			usage
 			exit 0
+			;;
+		-f)
+			shift
+			ENV_FILE=$1
+			if [ -f $ENV_FILE ]; then {
+				echo "Loading env-file . . ."
+				source $ENV_FILE
+			}
+			else {
+				echo "Incorrect argument of option -f <existing env-file> provided"
+				exit 2
+			}
+			fi
 			;;
 		-r|--redis)
 			shift
@@ -176,14 +195,31 @@ if [ $UID -ne $MY_UID_N ]; then
 	exit 1;
 fi
 
-test $PASS -eq 1 && { echo "Password for Redis should be: " \
-	&& REDIS_MYPASSWORD=$(mkpasswd -m sha256crypt | cut -d '$' -f 4 ) && echo "RedisPassword = ${REDIS_MYPASSWORD}"; }
-test $PASS -eq 1 && { echo "Password for MariaDB admin should be: " \
-	&& MARIADB_DBROOTPWD=$(mkpasswd -m sha256crypt | cut -d '$' -f 4 ) && echo "MariaDB admin Password = ${MARIADB_DBROOTPWD}"; }
-test $PASS -eq 1 && { echo "Password for MariaDB database should be: " \
-	&& MARIADB_DBPASSWD=$(mkpasswd -m sha256crypt | cut -d '$' -f 4 ) && echo "MariaDB database Password = ${MARIADB_DBPASSWD}"; }
-read -p "Username for Nextcloud Admin should be: [admin] " NC_ADMIN_USER 
-read -s -p "Password for Nextcloud Admin should be: " NC_ADMIN_PASS 
+if [[ $PASS -eq 1 ]]; then { 
+	echo "Password for Redis should be: " \
+	&& REDIS_MYPASSWORD=$(mkpasswd -m sha256crypt | cut -d '$' -f 4 ) && echo "RedisPassword = ${REDIS_MYPASSWORD}"
+	echo "Password for MariaDB admin should be: " \
+	&& MARIADB_DBROOTPWD=$(mkpasswd -m sha256crypt | cut -d '$' -f 4 ) && echo "MariaDB admin Password = ${MARIADB_DBROOTPWD}"
+	echo "Password for MariaDB database should be: " \
+	&& MARIADB_DBPASSWD=$(mkpasswd -m sha256crypt | cut -d '$' -f 4 ) && echo "MariaDB database Password = ${MARIADB_DBPASSWD}"
+	read -p "Username for Nextcloud Admin should be: [${NC_ADMIN_USER}] " NC_ADMIN_USER 
+	read -s -p "Password for Nextcloud Admin should be: " NC_ADMIN_PASS 
+	writeenvfile
+}
+else
+	if [ -f $ENV_FILE ]; then
+		source $ENV_FILE
+	else {
+		echo "Error: could not load file: $ENV_FILE"
+		echo "pls., provide an ENV_file with -f <filename> or"
+		echo "with option -p creates new password ... "
+		echo
+		usage
+		exit 2
+	}
+	fi
+fi
+
 
 test -z $DEBUG || { 
 	echo "RedisPassword = ${REDIS_MYPASSWORD}"
@@ -201,7 +237,8 @@ cd ${WORKING_DIR}
 
 docker build -t ${REDIS_CONTAINER:=redis} --build-arg NC_REDIS_UID=${REDIS_UID:-1003} redis
 docker build -t ${MARIADB_CONTAINER:=bmdb} --build-arg NC_MARIADB_UID=${MARIADB_UID:-1003} mariaDB
-docker build -t ${NC_CONTAINER:=nc} --build-arg NC_UID=${NC_UID:-1003} nginx
+#docker build -t ${NC_CONTAINER:=nc} --build-arg NC_UID=${NC_UID:-1003} nginx
+docker build -t ${NC_CONTAINER:=nc} nginx
 
 popd
 
@@ -220,7 +257,7 @@ cd ${WORKING_DIR}
        -e MARIADB_DATABASE=${MARIADB_DB:=nextcloud} -e MARIADB_USER=${MARIADB_DBUSER:=nextcloud} -e MARIADB_PASSWORD=${MARIADB_DBPASSWD} \
        -v ${MARIADB_PV}:/bitnami/mariadb ${MARIADB_CONTAINER:=bmdb}:latest
 
-[[ $NC -eq 1 ]] && docker run -d --name ${NC_NAME:=nextcloud} -e LETSENCRYPT=${NC_LETSENCRYPT:=0} \
+[[ $NC -eq 1 ]] && docker run --name ${NC_NAME:=nextcloud} -e LETSENCRYPT=${NC_LETSENCRYPT:=0} \
 	-e NC_REDIS_PASS=${REDIS_MYPASSWORD} -e NC_REDIS_HOST="172.17.0.2" \
 	-e NC_DB_HOST="172.17.0.3" -e NC_DB_NAME="${MARIADB_DB:=nextcloud}" -e NC_DB_USER="${MARIADB_DBUSER:=nextcloud}" -e NC_DB_PASS=${MARIADB_DBPASSWD} \
 	-e NC_ADMIN_USER="${NC_ADMIN_USER:=admin}" -e NC_ADMIN_PASS="${NC_ADMIN_PASS:=admin345admin}" \

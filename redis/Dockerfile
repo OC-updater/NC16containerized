@@ -1,7 +1,7 @@
 FROM bitnami/minideb-extras-base:stretch
 LABEL maintainer "Bitnami <containers@bitnami.com>"
 
-ARG NC_REDIS_USER="1003"
+ARG NC_REDIS_UID="1003"
 ARG NC_REDIS_PASS="SVRMB36F56v3Ahi7la9qZ0xjthuOmOFyTSSUPEdHwU"
 ENV BITNAMI_PKG_CHMOD="-R g+rwX" \
     HOME="/" \
@@ -31,6 +31,6 @@ ENV ALLOW_EMPTY_PASSWORD="no" \
 
 EXPOSE 6379
 
-USER $NC_REDIS_USER
+USER $NC_REDIS_UID
 ENTRYPOINT [ "/entrypoint.sh" ]
 CMD [ "/run.sh" ]
