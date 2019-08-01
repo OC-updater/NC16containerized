@@ -1,6 +1,7 @@
 FROM bitnami/minideb-extras-base:stretch
 LABEL maintainer "Bitnami <containers@bitnami.com>"
 
+ARG NC_MARIADB_UID="1003"
 ENV BITNAMI_PKG_CHMOD="-R g+rwX" \
     HOME="/" \
     OS_ARCH="amd64" \
@@ -35,6 +36,6 @@ ENV ALLOW_EMPTY_PASSWORD="no" \
 
 EXPOSE 3306
 
-USER 1000
+USER $NC_MARIADB_UID
 ENTRYPOINT [ "/entrypoint.sh" ]
 CMD [ "/run.sh" ]

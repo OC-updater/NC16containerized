@@ -28,6 +28,9 @@ REDIS_MYPASSWORD="DFilT5gylH3EhrfKxLLa8SUHR9KO.pFfYvFtDrBgmi/"
 # REDIS_NAME=<docker-server-name>
 # REDIS_PV=<Path to PV of redis DB>
 REDIS_PV="/opt/nextcloud/redis"
+# REDIS_UID=<uid of running container>
+REDIS_UID="1003"
+
 #
 # mysql:
 # MARIADB_CONTAINER=<container name>
@@ -40,6 +43,8 @@ MARIADB_DBROOTPWD="iExBsXOA0R0NgzIbFUVXFmy2upC9WdFXf49DOw8BAQX0"
 MARIADB_DBPASSWD="jCPhOlM58KI4csXpou1JHv/imjAJaV2W7OR67DdZtY2"
 # MARIADB_PV=<Path to PV of mysql DB>
 MARIADB_PV="/opt/nextcloud/mariadb"
+# MARIADB_UID=<uid of running container>
+MARIADB_UID="1003"
 
 # nginx:
 # NC_LETSENCRYPT=<0|1>  1 ... getting real certs, 0 ... getting test certs
@@ -50,14 +55,17 @@ NC_LETSENCRYPT=0
 NC_DATA_PV="/opt/nextcloud/data"
 # NC_CONFIG_PV=<Path to PV of nextcloud-config>
 NC_CONFIG_PV="/opt/nextcloud/config"
+# NC_UID=<uid of running container>
+NC_UID="1003"
+
 
 # Creating the container:
 # 1. redis
-# docker build -t ${REDIS_CONTAINER:=redis} .
+# docker build -t ${REDIS_CONTAINER:=redis} --build-arg NC_REDIS_UID=${REDIS_UID:-1003} .
 # 2. mysql
-# docker build -t ${MARIADB_CONTAINER:=bmdb} .
+# docker build -t ${MARIADB_CONTAINER:=bmdb} --build-arg NC_MARIADB_UID=${MARIADB_UID:-1003} .
 # 3. nginx
-# docker build -t ${NC_CONTAINER:=nc} .
+# docker build -t ${NC_CONTAINER:=nc} --build-arg NC_UID=${NC_UID:-1003} .
 
 
 # Starting the container:
@@ -191,9 +199,9 @@ test -z $DEBUG || {
 pushd .
 cd ${WORKING_DIR}
 
-docker build -t ${REDIS_CONTAINER:=redis} redis
-docker build -t ${MARIADB_CONTAINER:=bmdb} mariaDB
-docker build -t ${NC_CONTAINER:=nc} nginx
+docker build -t ${REDIS_CONTAINER:=redis} --build-arg NC_REDIS_UID=${REDIS_UID:-1003} redis
+docker build -t ${MARIADB_CONTAINER:=bmdb} --build-arg NC_MARIADB_UID=${MARIADB_UID:-1003} mariaDB
+docker build -t ${NC_CONTAINER:=nc} --build-arg NC_UID=${NC_UID:-1003} nginx
 
 popd
 
@@ -206,13 +214,13 @@ pushd .
 cd ${WORKING_DIR}
 
 
-[[ $REDIS -eq 1 ]] && docker run --name ${REDIS_NAME:=redis-server} -e REDIS_PASSWORD=${REDIS_MYPASSWORD} -v ${REDIS_PV}:/bitnami/redis/data ${REDIS_CONTAINER:=redis}:latest
+[[ $REDIS -eq 1 ]] && docker run -d --name ${REDIS_NAME:=redis-server} -e REDIS_PASSWORD=${REDIS_MYPASSWORD} -v ${REDIS_PV}:/bitnami/redis/data ${REDIS_CONTAINER:=redis}:latest
 
-[[ $MARIADB -eq 1 ]] && docker run --name ${MARIADB_NAME:=mariadb-server} -e MARIADB_ROOT_PASSWORD=${MARIADB_DBROOTPWD} \
+[[ $MARIADB -eq 1 ]] && docker run -d --name ${MARIADB_NAME:=mariadb-server} -e MARIADB_ROOT_PASSWORD=${MARIADB_DBROOTPWD} \
        -e MARIADB_DATABASE=${MARIADB_DB:=nextcloud} -e MARIADB_USER=${MARIADB_DBUSER:=nextcloud} -e MARIADB_PASSWORD=${MARIADB_DBPASSWD} \
        -v ${MARIADB_PV}:/bitnami/mariadb ${MARIADB_CONTAINER:=bmdb}:latest
 
-[[ $NC -eq 1 ]] && docker run --name ${NC_NAME:=nextcloud} -e LETSENCRYPT=${NC_LETSENCRYPT:=0} \
+[[ $NC -eq 1 ]] && docker run -d --name ${NC_NAME:=nextcloud} -e LETSENCRYPT=${NC_LETSENCRYPT:=0} \
 	-e NC_REDIS_PASS=${REDIS_MYPASSWORD} -e NC_REDIS_HOST="172.17.0.2" \
 	-e NC_DB_HOST="172.17.0.3" -e NC_DB_NAME="${MARIADB_DB:=nextcloud}" -e NC_DB_USER="${MARIADB_DBUSER:=nextcloud}" -e NC_DB_PASS=${MARIADB_DBPASSWD} \
 	-e NC_ADMIN_USER="${NC_ADMIN_USER:=admin}" -e NC_ADMIN_PASS="${NC_ADMIN_PASS:=admin345admin}" \

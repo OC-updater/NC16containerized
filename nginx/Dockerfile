@@ -6,6 +6,7 @@ FROM bitnami/minideb:stretch
 ARG NC_REDIS_PASS
 ARG NC_MARIADB_PASS
 ARG NC_MARIADB_ROOT
+ARG NC_UID=1003
 ENV NC_REDIS_PASS=${NC_REDIS_PASS:-"SVRMB36F56v3Ahi7la9qZ0xjthuOmOFyTSSUPEdHwU"}
 ENV NC_MARIADB_PASS=${NC_MARIADB_PASS}
 ENV NC_MARIADB_ROOT=${NC_MARIADB_ROOT}
@@ -97,6 +98,7 @@ RUN echo "starting to install some useful monitoring tools" \
 COPY files/*.sh /usr/local/bin/
 COPY files/entrypoint.sh /
 
+USER $NC_UID
 ENTRYPOINT [ "/entrypoint.sh" ]
 CMD [ "/bin/bash" ]
 
