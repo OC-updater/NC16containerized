@@ -49,13 +49,14 @@ else
    setupgeneral
 fi
 
-for SERV in php7.3-fpm nginx; do 
+#for SERV in php7.3-fpm nginx; do 
+for SERV in php7.3-fpm; do 
    service $SERV start
 done
 
-#nginx -g 'daemon off;'
+nginx -g 'daemon off;'
 
 #exec /bin/bash
-bash
+#bash
 
 #sleep 1d
