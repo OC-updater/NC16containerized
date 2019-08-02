@@ -274,7 +274,7 @@ cd ${WORKING_DIR}
        -e MARIADB_DATABASE=${MARIADB_DB:=nextcloud} -e MARIADB_USER=${MARIADB_DBUSER:=nextcloud} -e MARIADB_PASSWORD=${MARIADB_DBPASSWD} \
        -v ${MARIADB_PV}:/bitnami/mariadb ${MARIADB_CONTAINER:=bmdb}:latest
 
-[[ $NC -eq 1 ]] && docker run --name ${NC_NAME:=nextcloud} -e LETSENCRYPT=${NC_LETSENCRYPT:=0} \
+[[ $NC -eq 1 ]] && docker run -d --name ${NC_NAME:=nextcloud} -e LETSENCRYPT=${NC_LETSENCRYPT:=0} \
 	-e NC_REDIS_PASS=${REDIS_MYPASSWORD} -e NC_REDIS_HOST="172.17.0.2" \
 	-e NC_DB_HOST="172.17.0.3" -e NC_DB_NAME="${MARIADB_DB:=nextcloud}" -e NC_DB_USER="${MARIADB_DBUSER:=nextcloud}" -e NC_DB_PASS=${MARIADB_DBPASSWD} \
 	-e NC_ADMIN_USER="${NC_ADMIN_USER:=admin}" -e NC_ADMIN_PASS="${NC_ADMIN_PASS:=admin345admin}" \
