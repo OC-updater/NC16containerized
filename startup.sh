@@ -22,6 +22,8 @@ PASS=0
 # we are using following vars and secrets:
 #
 # redis:
+# Run REDIS container, (0|1)
+REDIS=0
 # REDIS_CONTAINER=<container name>
 # REDIS_MYPASSWORD=<password>
 REDIS_MYPASSWORD="DFilT5gylH3EhrfKxLLa8SUHR9KO.pFfYvFtDrBgmi/"
@@ -33,6 +35,8 @@ REDIS_UID="1003"
 
 #
 # mysql:
+# Run MARIADB container, (0|1)
+MARIADB=0
 # MARIADB_CONTAINER=<container name>
 # MARIADB_NAME=<docker-server-name>
 # MARIADB_DBROOTPWD=<datenbank admin password>
@@ -47,6 +51,8 @@ MARIADB_PV="/opt/nextcloud/mariadb"
 MARIADB_UID="1003"
 
 # nginx:
+# Run NC container (0|1)
+NC=0
 # NC_LETSENCRYPT=<0|1>  1 ... getting real certs, 0 ... getting test certs
 NC_LETSENCRYPT=0
 # NC_CONTAINER=<container name>
@@ -84,6 +90,9 @@ NC_ADMIN_PASS="admin345"
 # docker run --name ${NC_NAME:=nextcloud} -e LETSENCRYPT=${NC_LETSENCRYPT:=0} -p 80:80 -p 443:443 -v ${NC_CONFIG_PV}:/opt/nextcloud/config -v ${NC_DATA_PV}:/opt/nextcloud/data ${NC_CONTAINER:=nc}:latest
 #
 
+#
+# using some functions
+#
 function getnewpw() {
 	mkpasswd -m sha256crypt | cut -d '$' -f 4
 }
@@ -115,6 +124,7 @@ function writeenvfile() {
 #
 # Starting main routine
 #
+
 # Call getopt to validate the provided input.
 options=$(getopt -o pf:r:m:n:h? --long help --long redis: --long mariadb: --long nextcloud: -- "$@")
 [ $? -eq 0 ] || {
@@ -242,7 +252,14 @@ docker build -t ${NC_CONTAINER:=nc} nginx
 
 popd
 
-
+#################
+# prepare firewalltables and nat
+#################
+#
+# Both following commands are adjusted to this configuration
+#nft add rule ip nat PREROUTING iif enp3s0 tcp dport { 80, 443 } dnat 172.17.0.4
+#nft add rule ip nat PREROUTING iif enp5s0 tcp dport { 80, 443 } dnat 172.17.0.4
+#
 #################
 # do the docker run section 
 # depending on options
@@ -265,3 +282,4 @@ cd ${WORKING_DIR}
 
 popd
 
+# docker run --name ${NC_NAME:=nextcloud} -e LETSENCRYPT=${NC_LETSENCRYPT:=0} -e NC_REDIS_PASS=${REDIS_MYPASSWORD} -e NC_REDIS_HOST="172.17.0.2" -e NC_DB_HOST="172.17.0.3" -e NC_DB_NAME="${MARIADB_DB:=nextcloud}" -e NC_DB_USER="${MARIADB_DBUSER:=nextcloud}" -e NC_DB_PASS=${MARIADB_DBPASSWD} -e NC_ADMIN_USER="${NC_ADMIN_USER:=admin}" -e NC_ADMIN_PASS="${NC_ADMIN_PASS:=admin345admin}" -p 80:80 -p 443:443 -v ${NC_CONFIG_PV}:/opt/nextcloud/config -v ${NC_DATA_PV}:/opt/nextcloud/data ${NC_CONTAINER:=nc}:latest
