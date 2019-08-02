@@ -50,13 +50,13 @@ else
 fi
 
 #for SERV in php7.3-fpm nginx; do 
-for SERV in php7.3-fpm cron; do
+for SERV in cron php7.3-fpm; do
    echo "-------- Starting: $SERV -----------"	
    service $SERV start
 done
 
 # nginx will be started in Dockerfile by CMD
-#nginx -g 'daemon off;'
+nginx -g 'daemon off;'
 
 #exec /bin/bash
 #bash
