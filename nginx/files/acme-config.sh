@@ -25,7 +25,9 @@ sed -i "s/\(^ssl_certificate.*\/etc\/ssl\/certs\/\)nc.crt;/\1${NC_FQDN[0]}-fullc
 sed -i "s/\(^ssl_certificate_key.*\/etc\/ssl\/private\/\)nc.key;/\1${NC_FQDN[0]}.key;/g" $NGINX_SSL_CONF
 sed -i "s/\(^ssl_trusted_certificate.*\/etc\/ssl\/certs\/\)nc.crt;/\1${NC_FQDN[0]}-chain.crt;/g" $NGINX_SSL_CONF
 
-service nginx restart
+# Later the nginx service will be started in foreground
+# be sure, we dont leave a running nginx
+service nginx stop
 
 
 
