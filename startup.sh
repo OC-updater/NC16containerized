@@ -2,6 +2,7 @@
 #
 
 DEBUG=1
+MYVERSION=1.1.3
 
 
 #############
@@ -98,13 +99,19 @@ function getnewpw() {
 }
 
 function usage() {
-	echo "$0 [-p] [-h|-?] [-f <env_file>] [-r|--redis <0|1>] [-m|--mariadb <0|1>] [-n|--nextcloud <0|1>]"
+	echo "$0 [-p] [-h|--help] [-V|--version] [-f <env_file>] [-r|--redis <0|1>] [-m|--mariadb <0|1>] [-n|--nextcloud <0|1>]"
 	echo "option -p : asking for new Passwords, generating sha256 strings"
-	echo "option -h,-? : show this help"
+	echo "option -h,--help : show this help"
+	echo "       -V, --version : Print Programm Version"
 	echo "       -f <env_file> : path/filename to env-file"
 	echo "       -r <0|1> : start docker container redis false or true"
 	echo "       -m <0|1> : start docker container mariadb false or true"
 	echo "       -n <0|1> : start docker container nextcloud false or true"
+	echo
+}
+function version() {
+	echo "$0 :"
+	echo "Programm Version V$MYVERSION"
 	echo
 }
 
@@ -126,7 +133,7 @@ function writeenvfile() {
 #
 
 # Call getopt to validate the provided input.
-options=$(getopt -o pf:r:m:n:h? --long help --long redis: --long mariadb: --long nextcloud: -- "$@")
+options=$(getopt -o Vpf:r:m:n:h --long version --long help --long redis: --long mariadb: --long nextcloud: -- "$@")
 [ $? -eq 0 ] || {
     echo "Incorrect options provided"
     exit 1
@@ -139,6 +146,10 @@ while true; do
 			;;
 		-h|--help)
 			usage
+			exit 0
+			;;
+		-V|--version)
+			version
 			exit 0
 			;;
 		-f)
