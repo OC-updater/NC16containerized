@@ -107,7 +107,7 @@ COPY files/entrypoint.sh /
 
 # USER does not work here, we need root.
 #USER $NC_UID
-#ENTRYPOINT [ "/entrypoint.sh" ]
-CMD [ "/bin/bash" ]
+ENTRYPOINT [ "/entrypoint.sh" ]
+#CMD [ "/bin/bash" ]
 #CMD ["/usr/sbin/nginx", "-g", "daemon off;"]
 
