@@ -1,6 +1,7 @@
 #FROM debian:stretch-slim
 #FROM debian:stretch AS runner
-FROM bitnami/minideb:stretch
+#FROM bitnami/minideb:stretch
+FROM bitnami/minideb:buster
 #FROM bitnami/minideb-extras-base:stretch
 
 ARG NC_REDIS_PASS
