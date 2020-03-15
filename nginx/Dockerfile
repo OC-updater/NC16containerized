@@ -53,15 +53,21 @@ COPY files/nc.key /etc/ssl/private/
 # Copy all shell-scripts for further configuration to /usr/local/bin
 #COPY files/*.sh /usr/local/bin/
 
+# ---------- deprecated begin -----------
 # --- Install Acmetools latest Version
-RUN echo "------- Installing acmetools -------" \
- && echo "deb http://ppa.launchpad.net/hlandau/rhea/ubuntu xenial main" | tee /etc/apt/sources.list.d/rhea.list \
- && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 9862409EF124EC763B84972FF5AC9651EDB58DFA \
- && apt update \
- && apt -y install acmetool
-COPY files/acme-target /var/lib/acme/conf/target
-COPY files/acme-responses /var/lib/acme/conf/responses
-
+#RUN echo "------- Installing acmetools -------" \
+# && echo "deb http://ppa.launchpad.net/hlandau/rhea/ubuntu xenial main" | tee /etc/apt/sources.list.d/rhea.list \
+# && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 9862409EF124EC763B84972FF5AC9651EDB58DFA \
+# && apt update \
+# && apt -y install acmetool
+#COPY files/acme-target /var/lib/acme/conf/target
+#COPY files/acme-responses /var/lib/acme/conf/responses
+# ---------- deprecated end -------------
+# --- Install  kshcherban/acme-nginx latest Version
+RUN echo "------- Installing kshcherban/acme-nginx -------" \
+ && echo "curl -fsSL -o /usr/local/bin/acme-nginx https://github.com/kshcherban/acme-nginx/releases/download/v0.1.2/acme-nginx" \
+ && curl -fsSL -o /usr/local/bin/acme-nginx https://github.com/kshcherban/acme-nginx/releases/download/v0.1.2/acme-nginx \
+ && chmod +x /usr/local/bin/acme-nginx
 
 # --- Install Nextcloud latest Version of 16 + preparation for letsencrypt-acme
 RUN echo "------- Installing Nextcloud V16.0.x -------" \
