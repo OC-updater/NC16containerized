@@ -17,7 +17,6 @@ VHOST="${NGINX_VHOST:-/etc/nginx/conf.d/letsencrypt.conf}"
 DOMKEY="${NC_DOMKEY:-/etc/ssl/private/nc.key}"
 DOMCRT="${NC_DOMCRT:-/etc/ssl/certs/nc.crt}"
 
---virtual-host /etc/nginx/conf.d/letsencrypt-V2.conf --domain-private-key /etc/ssl/private/nc.key -o /etc/ssl/certs/nc.crt -d nc.dtx.at -d nextcloud.dtx.at
 
 service nginx status
 case "$?" in
@@ -25,7 +24,9 @@ case "$?" in
 	3) echo "service nginx not started yet" && service nginx start ;;
 esac 
 
-$ACMETOOL --virtual-host ${VHOST} --domain-private-key ${DOMKEY} -o ${DOMCRT} -d ${NC_FQDN[1]} -d ${NC_FQDN[2]}
+echo "Getting signed certs . . .."
+echo $ACMETOOL --virtual-host ${VHOST} --domain-private-key ${DOMKEY} -o ${DOMCRT} -d ${NC_FQDN[0]} -d ${NC_FQDN[1]}
+$ACMETOOL --virtual-host ${VHOST} --domain-private-key ${DOMKEY} -o ${DOMCRT} -d ${NC_FQDN[0]} -d ${NC_FQDN[1]}
 
 # Later the nginx service will be started in foreground
 # be sure, we dont leave a running nginx
