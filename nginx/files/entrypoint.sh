@@ -11,7 +11,7 @@ NC_CONF="${NC_ROOT}/config"
 
 # setup always
 setupgeneral() {
-   for NC_CONF in php_configure.sh acme-config.sh; do
+   for NC_CONF in php_configure.sh acme-client.sh; do
        if [ -f "$BIN_SH/$NC_CONF" ]; then
 	   echo "----------- Install: $NC_CONF -----------"
            . $BIN_SH/$NC_CONF
@@ -25,7 +25,7 @@ setupgeneral() {
 }
 # setup only one time, if there is no nextcloud config.php yet
 setupnc() {
-   for NC_CONF in php_configure.sh acme-config.sh nextcloud.sh; do
+   for NC_CONF in php_configure.sh acme-client.sh nextcloud.sh; do
        if [ -f "$BIN_SH/$NC_CONF" ]; then
 	   echo "----------- Install: $NC_CONF -----------"
            . $BIN_SH/$NC_CONF
