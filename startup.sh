@@ -2,7 +2,7 @@
 #
 
 DEBUG=1
-MYVERSION=1.1.3
+MYVERSION=1.1.4
 
 
 #############
@@ -12,6 +12,9 @@ MY_UID=nextcloud
 MY_UID_N=$(id -u ${MY_UID})
 WORKING_DIR="/home/${MY_UID}/work/NC16containerized"
 ENV_FILE="$WORKING_DIR/.env-nc"
+
+# (0|1)=(false|true) build process will be started. (default=false)
+BUILD=0
 
 # autocreation of passwords if PASS=0
 PASS=0
@@ -99,10 +102,11 @@ function getnewpw() {
 }
 
 function usage() {
-	echo "$0 [-p] [-h|--help] [-V|--version] [-f <env_file>] [-r|--redis <0|1>] [-m|--mariadb <0|1>] [-n|--nextcloud <0|1>]"
+	echo "$0 [-p] [-h|--help] [-V|--version] [-b] [-f <env_file>] [-r|--redis <0|1>] [-m|--mariadb <0|1>] [-n|--nextcloud <0|1>]"
 	echo "option -p : asking for new Passwords, generating sha256 strings"
 	echo "option -h,--help : show this help"
 	echo "       -V, --version : Print Programm Version"
+	echo "       -b : build new containers, build process will be started"
 	echo "       -f <env_file> : path/filename to env-file"
 	echo "       -r <0|1> : start docker container redis false or true"
 	echo "       -m <0|1> : start docker container mariadb false or true"
@@ -133,7 +137,7 @@ function writeenvfile() {
 #
 
 # Call getopt to validate the provided input.
-options=$(getopt -o Vpf:r:m:n:h --long version --long help --long redis: --long mariadb: --long nextcloud: -- "$@")
+options=$(getopt -o Vpbf:r:m:n:h --long version --long help --long redis: --long mariadb: --long nextcloud: -- "$@")
 [ $? -eq 0 ] || {
     echo "Incorrect options provided"
     exit 1
@@ -164,6 +168,10 @@ while true; do
 				exit 2
 			}
 			fi
+			;;
+		-b)
+			shift
+			BUILD=1
 			;;
 		-r|--redis)
 			shift
@@ -253,16 +261,18 @@ test -z $DEBUG || {
 #################
 # Start the docker build section
 #################
-pushd .
-cd ${WORKING_DIR}
+if [[ $BUILD -eq 1 ]]; then { 
+	pushd .
+	cd ${WORKING_DIR}
 
-docker build -t ${REDIS_CONTAINER:=redis} --build-arg NC_REDIS_UID=${REDIS_UID:-1003} redis
-docker build -t ${MARIADB_CONTAINER:=bmdb} --build-arg NC_MARIADB_UID=${MARIADB_UID:-1003} mariaDB
-#docker build -t ${NC_CONTAINER:=nc} --build-arg NC_UID=${NC_UID:-1003} nginx
-docker build -t ${NC_CONTAINER:=nc} nginx
+	docker build -t ${REDIS_CONTAINER:=redis} --build-arg NC_REDIS_UID=${REDIS_UID:-1003} redis
+	docker build -t ${MARIADB_CONTAINER:=bmdb} --build-arg NC_MARIADB_UID=${MARIADB_UID:-1003} mariaDB
+	#docker build -t ${NC_CONTAINER:=nc} --build-arg NC_UID=${NC_UID:-1003} nginx
+	docker build -t ${NC_CONTAINER:=nc} nginx
 
-popd
-
+	popd
+}
+fi
 #################
 # prepare firewalltables and nat
 #################
